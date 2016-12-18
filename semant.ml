@@ -241,8 +241,11 @@ let check (functions, statements) =
                                             Func(func_decl.typ, formal_types)
 
     and check_func func =
+        (match func.typ with
+            Int | Pix | Bool | Float | Void -> ignore 0
+          | _ -> raise(Failure("Invalid function return type \"" ^ string_of_typ func.typ ^ "\"")));
         report_dup (fun _ -> "Duplicate formals in function " ^ func.fname) func.formals;
-        List.iter (check_void (fun n -> "Formal arguments cannot have a void type" ^ string_of_dectr n)) func.formals;
+        List.iter (check_void (fun n -> "Formal arguments cannot have a void type " ^ string_of_dectr n)) func.formals;
         let func_formals = List.fold_left (fun m (typ, dect) -> (match typ with
                                                                  Func (t,f) -> let form_func_sign = (string_of_dectr dect) in
                                                                                let form_form_bind = List.map (fun fo -> (fo, DecId("novar"))) f in
